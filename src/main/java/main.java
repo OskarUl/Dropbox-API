@@ -37,10 +37,10 @@ public class main {
         try
         {
             //output file for download --> storage location on local system to download file
-            OutputStream downloadFile = new FileOutputStream("D:\\text");
+            OutputStream downloadFile = new FileOutputStream("");
             try
             {
-                FileMetadata metadata = client.files().downloadBuilder("")
+                FileMetadata metadata = client.files().downloadBuilder("/Text.txt")
                         .download(downloadFile);
             }
             finally
@@ -60,11 +60,11 @@ public class main {
             JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
         }
         // Upload "test.txt" to Dropbox
-        /*try (InputStream in = new FileInputStream("C:\\Users\\Hule-Elev\\IdeaProjects\\serverUpdateTest\\Text.txt.txt")) {
+        try (InputStream in = new FileInputStream("C:\\Users\\Hule-Elev\\IdeaProjects\\serverUpdateTest\\Text.txt.txt")) {
             FileMetadata metadata = client.files().uploadBuilder("/Text.txt")
                     .uploadAndFinish(in);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }
