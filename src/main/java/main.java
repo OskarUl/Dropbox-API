@@ -13,15 +13,14 @@ public class main {
     private static final String ACCESS_TOKEN = "gJKkMgm0o8AAAAAAAAAAYSuQZFy2plTSmSAt02gsXVAxn2gTn-qVBaqIMvdZwy8q";
 
     public static void main(String args[]) throws DbxException {
-        // Create Dropbox client
+        byte[] b = {65,66,67,68,69};;
+
         DbxRequestConfig config = new DbxRequestConfig("dropbox", "en_US");
         DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
 
-        // Get current account info
         FullAccount account = client.users().getCurrentAccount();
         System.out.println(account.getName().getDisplayName());
 
-        // Get files and folder metadata from Dropbox root directory
         ListFolderResult result = client.files().listFolder("");
         while (true) {
             for (Metadata metadata : result.getEntries()) {
@@ -34,10 +33,17 @@ public class main {
 
             result = client.files().listFolderContinue(result.getCursor());
         }
-        try
-        {
-            //output file for download --> storage location on local system to download file
-            OutputStream downloadFile = new FileOutputStream("");
+
+        try (InputStream in = new FileInputStream("D:\\Oskar\\Documents\\output.txt")) {
+            Metadata met = client.files().delete("/Text.txt");
+            FileMetadata metadata = client.files().uploadBuilder("/Text.txt")
+                    .uploadAndFinish(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            OutputStream downloadFile = new FileOutputStream("D:\\Oskar\\Documents\\test.txt");
             try
             {
                 FileMetadata metadata = client.files().downloadBuilder("/Text.txt")
@@ -48,23 +54,13 @@ public class main {
                 downloadFile.close();
             }
         }
-        //exception handled
         catch (DbxException e)
         {
-            //error downloading file
             JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
         }
         catch (IOException e)
         {
-            //error downloading file
             JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
-        }
-        // Upload "test.txt" to Dropbox
-        try (InputStream in = new FileInputStream("C:\\Users\\Hule-Elev\\IdeaProjects\\serverUpdateTest\\Text.txt.txt")) {
-            FileMetadata metadata = client.files().uploadBuilder("/Text.txt")
-                    .uploadAndFinish(in);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
