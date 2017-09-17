@@ -25,6 +25,32 @@ public class main {
         while (true) {
             for (Metadata metadata : result.getEntries()) {
                 System.out.println(metadata.getPathLower());
+                if (metadata.getPathLower().equals("/text.txt")) {
+                    client.files().delete("/text.txt");
+                }
+                try {
+                    InputStream in = new FileInputStream("C:\\Users\\Hule-Elev\\Documents\\output.txt");
+                    client.files().uploadBuilder("/text.txt").uploadAndFinish(in);
+                    OutputStream downloadFile = new FileOutputStream("C:\\Users\\Hule-Elev\\Documents\\Input.txt");
+                    try {
+                        if (metadata.getPathLower().equals("/text.txt")) {
+                            client.files().downloadBuilder("/text.txt").download(downloadFile);
+                            System.out.println("text.txt has been downloaded!");
+                        }else{
+                            System.out.println("text.txt has not been downloaded!");
+                        }
+                    } finally {
+                        downloadFile.close();
+                    }
+                }
+                catch (DbxException e)
+                {
+                    JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
+                }
+                catch (IOException e)
+                {
+                    JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
+                }
             }
 
             if (!result.getHasMore()) {
@@ -32,35 +58,6 @@ public class main {
             }
 
             result = client.files().listFolderContinue(result.getCursor());
-        }
-
-        try (InputStream in = new FileInputStream("D:\\Oskar\\Documents\\output.txt")) {
-            Metadata met = client.files().delete("/Text.txt");
-            FileMetadata metadata = client.files().uploadBuilder("/Text.txt")
-                    .uploadAndFinish(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            OutputStream downloadFile = new FileOutputStream("D:\\Oskar\\Documents\\test.txt");
-            try
-            {
-                FileMetadata metadata = client.files().downloadBuilder("/Text.txt")
-                        .download(downloadFile);
-            }
-            finally
-            {
-                downloadFile.close();
-            }
-        }
-        catch (DbxException e)
-        {
-            JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
-        }
-        catch (IOException e)
-        {
-            JOptionPane.showMessageDialog(null, "Unable to download file to local system\n Error: " + e);
         }
     }
 }
